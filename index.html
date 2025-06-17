@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    </head>
+
+    <body onload="fetchContacts()">
+
+        <div id="table">Contacts Loading...</div>
+        <button id="refresh" type="button">Refresh</button>
+        <button id="addContact" type="button">Add Contact</button>
+
+        <script src="config.js"></script>
+        <script>
+
+            //add an event listener for the refresh button
+            document.getElementById("refresh").addEventListener('click', fetchContacts);
+            //add an event listener for the add-contacts button
+            document.getElementById("addContact").addEventListener('click', addContact);
+
+            //in function fetchContacts we're retrieving a json array called data 
+            function fetchContacts() {
+                fetch(rootPath + "controller/get-contacts/")
+                .then(function(response) {
+                    return response.json();
+                })
+                .then (function(data){   
+                    displayOutput(data); //we're passing that array into the display output function
+                    //console.log(data);
+                })          
+            }
+
+            function displayOutput(data){  
+                output = "<table>"; //this function displays the info in the array with a table
+
+                    for(a in data){ //iterate through the data array
+                        output += ` 
+                        <tr onclick="editContact(${data[a].id})"> 
+                            <td><img src="${rootPath}controller/uploads/${data[a].avatar}" width="40"/></td> 
+                            <td><h5>${data[a].firstname}</h5></td>
+                            <td><h5>${data[a].lastname}</h5></td>
+                        </tr>`
+                        //take each element and put it into a cell of the table
+                        // the ` indentation is important (find  out why and write it in this comment)    
+                    }
+                output += "</table>"; //we close the table
+                document.getElementById("table").innerHTML = output; //set the id element to be whatever is in the displayOutput function table
+            }
+
+            function addContact(){ //function for adding contacts
+                window.open("add-contacts.html", "_self");
+            }
+
+            function editContact(id) {
+                window.open("edit-contact.html?id=" + id, "_self");
+            }
+        </script>
+    </body>
+</html>
